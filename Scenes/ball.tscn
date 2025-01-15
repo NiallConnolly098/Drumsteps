@@ -5,12 +5,13 @@
 [ext_resource type="AudioStream" uid="uid://bi5tlic54nvuq" path="res://Media/Sounds/clean-snare-sample-a-key-06-oV5.mp3" id="2_6f045"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v0om2"]
-size = Vector2(56, 56)
+size = Vector2(64, 64)
 
 [node name="Ball" type="Area2D"]
 script = ExtResource("1_ub42y")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(1.125, 1.125)
 texture = ExtResource("1_jsyd1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -1,6 +1,6 @@
 extends StaticBody2D
 
-@export var is_movable = false  # Steps can optionally be made draggable
+@export var is_movable = true  # Steps can optionally be made draggable
 
 func _ready():
 	# Set the step in the "steps" group for collision detection

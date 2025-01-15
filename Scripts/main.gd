@@ -29,9 +29,11 @@ func _on_grid_drop(position):
 
 # Called when the user presses play
 func _on_play_button_pressed():
-	for item in items_in_grid:
-		if item.name == "Ball":
-			item.set_physics_process(true)
+	# Start simulation for all balls and steps
+	for node in get_tree().get_nodes_in_group("balls"):
+		node.start_simulation()
+	for node in get_tree().get_nodes_in_group("steps"):
+		node.start_simulation()
 
 func _on_stop_button_pressed():
 	for item in items_in_grid:

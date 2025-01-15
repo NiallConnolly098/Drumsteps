@@ -1,12 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://smle047ig7mj"]
+[gd_scene load_steps=6 format=3 uid="uid://smle047ig7mj"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_1qjmc"]
 [ext_resource type="Texture2D" uid="uid://ytvenapyn18t" path="res://Media/Art/bg.png" id="2_6og5j"]
 [ext_resource type="Script" path="res://Scripts/Grid.gd" id="2_fr20y"]
-[ext_resource type="Texture2D" uid="uid://b8kyyds4w7kw3" path="res://Media/Art/Ball.png" id="3_quigj"]
-[ext_resource type="Script" path="res://Scripts/BallDraggable.gd" id="4_pt6hb"]
-[ext_resource type="Texture2D" uid="uid://cauy74upxjnep" path="res://Media/Art/Step.png" id="5_x08xw"]
-[ext_resource type="Script" path="res://Scripts/StepDraggable.gd" id="6_et0no"]
+[ext_resource type="PackedScene" uid="uid://c64wbaim018j1" path="res://Scenes/ball.tscn" id="3_08xku"]
+[ext_resource type="PackedScene" uid="uid://blyavrwxn36gt" path="res://Scenes/step.tscn" id="4_n1fgt"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -25,21 +23,21 @@ anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 64.0
 
-[node name="BallDraggable" type="TextureRect" parent="TopBar"]
-layout_mode = 0
-offset_left = 896.0
-offset_right = 960.0
-offset_bottom = 64.0
-texture = ExtResource("3_quigj")
-script = ExtResource("4_pt6hb")
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 1
 
-[node name="StepDraggable" type="TextureRect" parent="TopBar"]
-layout_mode = 0
-offset_left = 960.0
-offset_right = 1024.0
-offset_bottom = 64.0
-texture = ExtResource("5_x08xw")
-script = ExtResource("6_et0no")
+[node name="Ball" parent="TopBar/HBoxContainer" instance=ExtResource("3_08xku")]
+position = Vector2(928, 32)
+
+[node name="Step" parent="TopBar/HBoxContainer" instance=ExtResource("4_n1fgt")]
+position = Vector2(992, 32)
 
 [node name="Grid" type="Control" parent="."]
 anchors_preset = 0

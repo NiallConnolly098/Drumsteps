@@ -4,11 +4,19 @@ extends Area2D
 @export var collision_sound: AudioStream  # Sound to play on collision
 
 var is_simulating = false  # Whether the simulation is active
+var dragging = false
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			dragging = event.pressed
+	if dragging and event is InputEventMouseMotion:
+		global_position += event.relative
 
 func _process(delta):
 	if is_simulating:
 		# Move the ball downward during simulation
-		global_position.y += fall_speed
+		position.y += fall_speed
 
 func start_simulation():
 	# Called to start the simulation
