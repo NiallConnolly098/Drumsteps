@@ -1,46 +1,58 @@
 extends Control
 
-# Drag and Drop variables
-var dragged_item = null
-var grid_size = 32
-var items_in_grid = []
+@export var ball_scene: PackedScene
+@export var step_scene: PackedScene
 
-# Called when the scene is ready
-func _ready():
-	pass
-
-# Handles dragging from the top bar
-func _on_item_dragged(item):
-	dragged_item = item
-
-# Handles dropping onto the grid
-func _on_grid_drop(position):
-	if dragged_item:
-		var grid_position = position / grid_size
-		grid_position.x = int(grid_position.x)
-		grid_position.y = int(grid_position.y)
-
-		var new_item = dragged_item.instance()
-		new_item.position = grid_position * grid_size
-		add_child(new_item)
-		items_in_grid.append(new_item)
-
-		dragged_item = null
-
-# Called when the user presses play
 func _on_play_button_pressed():
-	# Start simulation for all balls and steps
-	for node in get_tree().get_nodes_in_group("balls"):
-		node.start_simulation()
-	for node in get_tree().get_nodes_in_group("steps"):
-		node.start_simulation()
+	# Get all children of the grid
+	var grid = $Grid
+	for node in grid.get_children():
+		if node is TextureRect:
+			replace_with_physics_node(node)
 
-func _on_stop_button_pressed():
-	for item in items_in_grid:
-		if item.name == "Ball":
-			item.set_physics_process(false)
-			item.position = item.position.snap(Vector2(grid_size, grid_size))
+func replace_with_physics_node(texture_rect):
+	var new_instance
 
-func _on_menu_button_pressed():
-	get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
-	SceneTree.quit
+	# Determine whether to replace with a ball or a step
+	if texture_rect.name == "Ball":
+		new_instance = ball_scene.instantiate()
+	elif texture_rect.name == "Step":
+		new_instance = step_scene.instantiate()
+	else:
+		return  # Ignore other nodes
+
+	# Position the new instance where the TextureRect was
+	new_instance.global_position = texture_rect.global_position
+
+	# Add the new instance to the grid's parent (or appropriate container)
+	texture_rect.get_parent().add_child(new_instance)
+
+	# Remove the original TextureRect
+	texture_rect.queue_free()
+	
+
+func reset_simulation():
+	var grid = $Grid  # Replace with your grid node path
+	for node in grid.get_children():
+		node.queue_free()
+
+	# Recreate the TextureRects in their initial positions
+	create_initial_items()
+
+func create_initial_items():
+	var grid = $Grid  # Replace with your grid node path
+	# Add TextureRects back to the grid with their initial positions
+	var ball_texture = preload("res://Media/Art/Ball.png")
+	var step_texture = preload("res://Media/Art/Step.png")
+
+	var ball = TextureRect.new()
+	ball.texture = ball_texture
+	ball.global_position = Vector2(100, 100)  # Adjust as needed
+	ball.name = "Ball"
+	grid.add_child(ball)
+
+	var step = TextureRect.new()
+	step.texture = step_texture
+	step.global_position = Vector2(200, 200)  # Adjust as needed
+	step.name = "Step"
+	grid.add_child(step)

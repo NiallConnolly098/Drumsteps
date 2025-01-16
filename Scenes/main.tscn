@@ -1,45 +1,46 @@
-[gd_scene load_steps=6 format=3 uid="uid://smle047ig7mj"]
+[gd_scene load_steps=10 format=3 uid="uid://smle047ig7mj"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_1qjmc"]
 [ext_resource type="Texture2D" uid="uid://ytvenapyn18t" path="res://Media/Art/bg.png" id="2_6og5j"]
 [ext_resource type="Script" path="res://Scripts/Grid.gd" id="2_fr20y"]
 [ext_resource type="PackedScene" uid="uid://c64wbaim018j1" path="res://Scenes/ball.tscn" id="3_08xku"]
+[ext_resource type="Texture2D" uid="uid://b8kyyds4w7kw3" path="res://Media/Art/Ball.png" id="3_ogdfv"]
+[ext_resource type="Script" path="res://Scripts/BallSpawner.gd" id="4_hvife"]
 [ext_resource type="PackedScene" uid="uid://blyavrwxn36gt" path="res://Scenes/step.tscn" id="4_n1fgt"]
+[ext_resource type="Texture2D" uid="uid://cauy74upxjnep" path="res://Media/Art/Step.png" id="5_bwqnl"]
+[ext_resource type="Script" path="res://Scenes/StepSpawner.gd" id="6_sw7fy"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_1qjmc")
+ball_scene = ExtResource("3_08xku")
+step_scene = ExtResource("4_n1fgt")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
 offset_top = 64.0
 offset_right = 1920.0
 offset_bottom = 1088.0
 texture = ExtResource("2_6og5j")
 
-[node name="TopBar" type="Control" parent="."]
-anchors_preset = 0
+[node name="TopBar" type="HBoxContainer" parent="."]
 offset_right = 1920.0
 offset_bottom = 64.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TopBar"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Ball" parent="TopBar/HBoxContainer" instance=ExtResource("3_08xku")]
-position = Vector2(928, 32)
+[node name="Ball" type="TextureRect" parent="TopBar"]
+layout_mode = 2
+texture = ExtResource("3_ogdfv")
+script = ExtResource("4_hvife")
 
-[node name="Step" parent="TopBar/HBoxContainer" instance=ExtResource("4_n1fgt")]
-position = Vector2(992, 32)
+[node name="Step" type="TextureRect" parent="TopBar"]
+layout_mode = 2
+texture = ExtResource("5_bwqnl")
+script = ExtResource("6_sw7fy")
 
 [node name="Grid" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 0
 offset_top = 64.0
 offset_right = 1920.0
@@ -48,7 +49,6 @@ mouse_filter = 1
 script = ExtResource("2_fr20y")
 
 [node name="PlayButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 1680.0
 offset_top = 992.0
 offset_right = 1792.0
@@ -56,7 +56,6 @@ offset_bottom = 1072.0
 text = "PLAY"
 
 [node name="StopButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 1800.0
 offset_top = 992.0
 offset_right = 1912.0
@@ -64,12 +63,13 @@ offset_bottom = 1072.0
 text = "STOP"
 
 [node name="MenuButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 1856.0
 offset_right = 1920.0
 offset_bottom = 64.0
 text = "X"
 
+[connection signal="mouse_entered" from="TopBar/Ball" to="TopBar/Ball" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="TopBar/Ball" to="TopBar/Ball" method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="TopBar/Step" to="TopBar/Step" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="TopBar/Step" to="TopBar/Step" method="_on_mouse_exited"]
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="StopButton" to="." method="_on_stop_button_pressed"]
-[connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
