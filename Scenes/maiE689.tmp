@@ -1,38 +1,45 @@
-[gd_scene load_steps=5 format=3 uid="uid://dx2o5nfi0rbjn"]
+[gd_scene load_steps=8 format=3 uid="uid://dx2o5nfi0rbjn"]
 
-[ext_resource type="Script" path="res://Scenes/main.gd" id="1_iif45"]
 [ext_resource type="Texture2D" uid="uid://ytvenapyn18t" path="res://Media/Art/bg.png" id="2_6og5j"]
+[ext_resource type="Script" path="res://Scripts/Grid.gd" id="2_fr20y"]
+[ext_resource type="Script" path="res://Scenes/top_bar.gd" id="2_k7tyc"]
 [ext_resource type="Texture2D" uid="uid://b8kyyds4w7kw3" path="res://Media/Art/Ball.png" id="3_ogdfv"]
+[ext_resource type="Script" path="res://Scripts/BallSpawner.gd" id="4_hvife"]
 [ext_resource type="Texture2D" uid="uid://cauy74upxjnep" path="res://Media/Art/Step.png" id="5_bwqnl"]
+[ext_resource type="Script" path="res://Scripts/StepSpawner.gd" id="8_hny1f"]
 
-[node name="Main" type="Node2D"]
-script = ExtResource("1_iif45")
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 
 [node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
 offset_top = 64.0
 offset_right = 1920.0
 offset_bottom = 1088.0
 texture = ExtResource("2_6og5j")
 
 [node name="TopBar" type="Control" parent="."]
-layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 64.0
+script = ExtResource("2_k7tyc")
 
-[node name="BallButton" type="TextureRect" parent="TopBar"]
+[node name="Ball" type="TextureRect" parent="TopBar"]
 layout_mode = 2
 offset_left = 896.0
 offset_right = 960.0
 offset_bottom = 64.0
 texture = ExtResource("3_ogdfv")
+script = ExtResource("4_hvife")
 
-[node name="StepButton" type="TextureRect" parent="TopBar"]
+[node name="Step" type="TextureRect" parent="TopBar"]
 layout_mode = 2
 offset_left = 960.0
 offset_right = 1024.0
 offset_bottom = 64.0
 texture = ExtResource("5_bwqnl")
+script = ExtResource("8_hny1f")
 
 [node name="Grid" type="Control" parent="."]
 layout_mode = 3
@@ -41,8 +48,10 @@ offset_top = 64.0
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 1
+script = ExtResource("2_fr20y")
 
 [node name="PlayButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 1680.0
 offset_top = 992.0
 offset_right = 1792.0
@@ -50,6 +59,7 @@ offset_bottom = 1072.0
 text = "PLAY"
 
 [node name="StopButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 1800.0
 offset_top = 992.0
 offset_right = 1912.0
@@ -57,7 +67,14 @@ offset_bottom = 1072.0
 text = "STOP"
 
 [node name="MenuButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 1856.0
 offset_right = 1920.0
 offset_bottom = 64.0
 text = "X"
+
+[connection signal="mouse_entered" from="TopBar/Ball" to="TopBar/Ball" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="TopBar/Ball" to="TopBar/Ball" method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="TopBar/Step" to="TopBar/Step" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="TopBar/Step" to="TopBar/Step" method="_on_mouse_exited"]
+[connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
