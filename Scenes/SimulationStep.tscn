@@ -1,16 +1,16 @@
 [gd_scene load_steps=3 format=3 uid="uid://blyavrwxn36gt"]
 
-[ext_resource type="Texture2D" uid="uid://cauy74upxjnep" path="res://Media/Art/Step.png" id="1_4bls8"]
+[ext_resource type="Texture2D" uid="uid://cauy74upxjnep" path="res://Media/Art/Step.png" id="1_rm6v7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_skhc8"]
 size = Vector2(64, 20)
 
 [node name="Step" type="StaticBody2D"]
-position = Vector2(32, 32)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_4bls8")
+position = Vector2(0, -44)
+texture = ExtResource("1_rm6v7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 22)
+position = Vector2(0, -22)
 shape = SubResource("RectangleShape2D_skhc8")
