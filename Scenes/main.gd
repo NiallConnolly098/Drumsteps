@@ -14,12 +14,10 @@ var grid_height = 16
 var is_dragging = false
 var current_dragged_object = null
 
-var occupied_cells = {}
+var global_node
 
 func _ready():
-	 # Connect the PlayButton signal using Callable
-	$PlayButton.pressed.connect(_on_PlayButton_pressed)
-
+	global_node = get_node("Global")
 
 func _input(event):
 	if event is InputEventScreenTouch:
@@ -27,8 +25,10 @@ func _input(event):
 			# Check if the touch is on the BallButton or StepButton
 			if $TopBar/BallButton.get_rect().has_point(event.position):
 				current_dragged_object = setup_ball_scene.instantiate()
+				current_dragged_object.name = "SetupBall"
 			elif $TopBar/StepButton.get_rect().has_point(event.position):
 				current_dragged_object = setup_step_scene.instantiate()
+				current_dragged_object.name = "SetupStep"
 			else:
 				# Check if the touch is on an existing object in the grid
 				for child in $Grid.get_children():
@@ -44,8 +44,8 @@ func _input(event):
 						if object_rect.has_point(event.position):
 							current_dragged_object = child
 							var cell_key = get_cell_key(current_dragged_object.position)
-							if occupied_cells.has(cell_key):
-								occupied_cells.erase(cell_key)
+							if global_node.occupied_cells.has(cell_key):
+								global_node.occupied_cells.erase(cell_key)
 								print("Picked up object from cell: ", cell_key)
 							break
 			
@@ -60,13 +60,20 @@ func _input(event):
 			if is_dragging and current_dragged_object:
 				if $Grid.get_rect().has_point(event.position):
 					# Add the object to the grid
-					var snapped_position = snap_to_grid(event.position)
+					var result = snap_to_grid(event.position)
+					var snapped_position = result["snapped_position"]
+					var cell_key = result["cell_key"]
+					
 					if snapped_position != null:
 						current_dragged_object.position = snapped_position
 						if current_dragged_object.get_parent() != $Grid:
 							current_dragged_object.get_parent().remove_child(current_dragged_object)
+							
 							$Grid.add_child(current_dragged_object)
-						print("Dropped object at cell: ", get_cell_key(snapped_position))
+						if current_dragged_object.name == "SetupStep":
+							global_node.occupied_cells[cell_key] = true
+							print("Step placed at cell: ", cell_key)
+						print("Dropped object at cell: ", cell_key)
 					else:
 						current_dragged_object.queue_free()
 						print("Cannot place object: Cell occupied")
@@ -82,20 +89,6 @@ func _input(event):
 		# Move the dragged object with the touch
 		if current_dragged_object:
 			current_dragged_object.position += event.relative
-
-func _on_PlayButton_pressed():
-	# Replace setup objects with simulation objects
-	for child in $Grid.get_children():
-		var new_object = null
-		if child.name == "SetupBall":
-			new_object = simulation_ball_scene.instantiate()
-		elif child.name == "SetupStep":
-			new_object = simulation_step_scene.instantiate()
-		
-		if new_object:
-			new_object.position = child.position
-			$Grid.add_child(new_object)
-			child.queue_free()
 
 func snap_to_grid(touch_position):
 	# Convert the global position to the grid's local coordinates
@@ -113,12 +106,35 @@ func snap_to_grid(touch_position):
 	print("Snapped position (global): ", snapped_position)
 	
 	var cell_key = get_cell_key(snapped_position)
-	if occupied_cells.has(cell_key):
-		return null
-	else:
-		occupied_cells[cell_key] = current_dragged_object
-		return snapped_position
+	return {"snapped_position": snapped_position, "cell_key": cell_key}
 
 func get_cell_key(pos):
 	var local_position = $Grid.get_global_transform().affine_inverse() * pos
 	return Vector2(round(local_position.x / cell_size), round(local_position.y / cell_size))
+
+func _on_play_button_pressed():
+	print("Play button pressed")
+	print("Number of children in $Grid: ", $Grid.get_child_count())
+	
+	for child in $Grid.get_children():
+		print("Child name: ", child.name)
+		var new_object = null
+		
+		if child.name == "SetupBall":
+			new_object = simulation_ball_scene.instantiate()
+			new_object.global_node = $Global
+			new_object.position = child.position
+			print("Replaced SetupBall with SimulationBall at position: ", child.position)
+			$Grid.add_child(new_object)
+			child.queue_free()
+		elif child.name == "SetupStep":
+			new_object = simulation_step_scene.instantiate()
+			new_object.position = child.position
+			print("Replaced SetupStep with SimulationStep at position: ", child.position)
+		if new_object:
+			new_object.position = child.position
+			$Grid.add_child(new_object)
+			child.queue_free()
+
+func _on_menu_button_pressed() -> void:
+	get_tree().quit()
