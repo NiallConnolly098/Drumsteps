@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://blyavrwxn36gt"]
+[gd_scene load_steps=3 format=3 uid="uid://blyavrwxn36gt"]
 
+[ext_resource type="Script" path="res://Scenes/step.gd" id="1_det50"]
 [ext_resource type="Texture2D" uid="uid://blf2drnr27u0h" path="res://Media/Art/Step.png" id="1_rm6v7"]
 
 [node name="Step" type="StaticBody2D"]
+script = ExtResource("1_det50")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_rm6v7")

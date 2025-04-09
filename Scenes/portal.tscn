@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://7dj2fg7i0vsv"]
+
+[ext_resource type="Script" path="res://Scenes/portal.gd" id="1_0wbga"]
+[ext_resource type="Texture2D" uid="uid://ca063mcqmy8s5" path="res://Media/Art/Portal1.png" id="2_ux6am"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uxl5s"]
+size = Vector2(56, 56)
+
+[node name="RigidBody2D" type="RigidBody2D"]
+script = ExtResource("1_0wbga")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_ux6am")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_uxl5s")
