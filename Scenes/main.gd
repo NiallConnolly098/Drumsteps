@@ -7,13 +7,18 @@ extends Node2D
 @export var simulation_step_scene: PackedScene = preload("res://Scenes/SimulationStep.tscn")
 @export var portal: PackedScene = preload("res://Scenes/portal.tscn")
 
+@onready var portal_connector = $PortalConnector
+
 var cell_size = 64.0
 var grid_width = 30
 var grid_height = 16
 
-# Variables to track dragging
 var is_dragging = false
 var current_dragged_object = null
+
+var portal_connection_mode = false
+var first_portal_selected = null
+var second_portal_selected = null
 
 var global_node
 
@@ -21,6 +26,35 @@ func _ready():
 	global_node = get_node("Global")
 
 func _input(event):
+	if portal_connection_mode and event is InputEventScreenTouch and event.pressed:
+		# Check for portal selection only in connection mode
+		for child in $Grid.get_children():
+			if child.name.begins_with("Portal_"):
+				var sprite = child.get_node("Sprite2D")
+				var object_rect = Rect2(
+					child.global_position - sprite.texture.get_size() / 2,
+					sprite.texture.get_size()
+				)
+				if object_rect.has_point(event.position):
+					if first_portal_selected == null:
+						first_portal_selected = child
+						child.modulate = Color(0.5, 1, 0.5) # Green highlight
+						print("First portal selected")
+					elif first_portal_selected != child:
+						first_portal_selected.connected_portal = child
+						child.connected_portal = first_portal_selected
+						portal_connector.portals.append(first_portal_selected)
+						portal_connector.portals.append(child)
+						first_portal_selected.modulate = Color(1, 1, 1)
+						child.modulate = Color(1, 1, 1)
+						print("Connected portals")
+						first_portal_selected = null
+					return
+		if first_portal_selected:
+			first_portal_selected.modulate = Color(1,1,1)
+			first_portal_selected = null
+		return
+	
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			# Check if the touch is on the BallButton or StepButton
@@ -146,12 +180,23 @@ func _on_play_button_pressed():
 			new_object.name = "SimulationStep_%d" % new_objects.size()
 			print("Replaced SetupStep with SimulationStep at position: ", child.position)
 		
+		elif child.name.begins_with("Portal_"):
+			new_object = child  # Keep the same portal
+			new_object.global_node = $Global
+			print("Portal maintained: ", child.name)
+		
 		if new_object:
 			new_objects.append(new_object)
+			if child != new_object:
+				child.queue_free()
+	
+	for child in $Grid.get_children():
+		if not child.name.begins_with("Portal_"):
 			child.queue_free()
-
+	
 	for new_object in new_objects:
-		$Grid.add_child(new_object)
+		if new_object.get_parent() != $Grid:
+			$Grid.add_child(new_object)
 		if new_object.name.begins_with("SimulationBall"):
 			new_object.start_movement()
 
@@ -160,3 +205,12 @@ func _on_menu_button_pressed() -> void:
 
 func _on_button_pressed() -> void:
 	get_tree().reload_current_scene()
+
+func _on_portal_connect_button_pressed():
+	portal_connection_mode = !portal_connection_mode
+	if portal_connection_mode:
+		print("Portal connection mode activated")
+	else:
+		print("Portal connection mode deactivated")
+		first_portal_selected = null
+		second_portal_selected = null

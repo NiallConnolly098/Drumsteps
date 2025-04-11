@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dx2o5nfi0rbjn"]
+[gd_scene load_steps=8 format=3 uid="uid://dx2o5nfi0rbjn"]
 
 [ext_resource type="Script" path="res://Scenes/main.gd" id="1_iif45"]
 [ext_resource type="Texture2D" uid="uid://ytvenapyn18t" path="res://Media/Art/bg.png" id="2_6og5j"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://blf2drnr27u0h" path="res://Media/Art/Step.png" id="5_bwqnl"]
 [ext_resource type="Texture2D" uid="uid://ca063mcqmy8s5" path="res://Media/Art/Portal1.png" id="5_x4bjd"]
 [ext_resource type="Script" path="res://Scenes/Global.gd" id="5_yj3dw"]
+[ext_resource type="Script" path="res://Scenes/PortalConnector.gd" id="7_05k8g"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_iif45")
@@ -73,6 +74,18 @@ offset_right = 1776.0
 offset_bottom = 1064.0
 text = "CLEAR"
 
+[node name="PortalConnect" type="Button" parent="."]
+offset_left = 16.0
+offset_top = 984.0
+offset_right = 128.0
+offset_bottom = 1064.0
+text = "Portal 
+Connect"
+
+[node name="PortalConnector" type="Node2D" parent="."]
+script = ExtResource("7_05k8g")
+
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="ClearButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="PortalConnect" to="." method="_on_portal_connect_button_pressed"]
