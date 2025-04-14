@@ -9,6 +9,8 @@ extends Node2D
 
 @onready var portal_connector = $PortalConnector
 
+var play_pressed = false
+
 var cell_size = 64.0
 var grid_width = 30
 var grid_height = 16
@@ -158,52 +160,55 @@ func get_cell_key(pos):
 	return Vector2(round(local_position.x / cell_size), round(local_position.y / cell_size))
 
 func _on_play_button_pressed():
-	print("Play button pressed")
-	print("Number of children in $Grid: ", $Grid.get_child_count())
-	var new_objects = []
-	
-	for child in $Grid.get_children():
-		print("Child name: ", child.name)
-		var new_object = null
+	if !play_pressed:
+		play_pressed = true
+		print("Play button pressed")
+		print("Number of children in $Grid: ", $Grid.get_child_count())
+		var new_objects = []
 		
-		if child.name.begins_with("SetupBall"):
-			new_object = simulation_ball_scene.instantiate()
-			new_object.global_node = $Global
-			new_object.position = child.position
-			new_object.name = "SimulationBall_%d" % new_objects.size()
-			print("Replaced SetupBall with SimulationBall at position: ", child.position)
+		for child in $Grid.get_children():
+			print("Child name: ", child.name)
+			var new_object = null
+			
+			if child.name.begins_with("SetupBall"):
+				new_object = simulation_ball_scene.instantiate()
+				new_object.global_node = $Global
+				new_object.position = child.position
+				new_object.name = "SimulationBall_%d" % new_objects.size()
+				print("Replaced SetupBall with SimulationBall at position: ", child.position)
+			
+			elif child.name.begins_with("SetupStep"):
+				new_object = simulation_step_scene.instantiate()
+				new_object.global_node = $Global
+				new_object.position = child.position
+				new_object.name = "SimulationStep_%d" % new_objects.size()
+				print("Replaced SetupStep with SimulationStep at position: ", child.position)
+			
+			elif child.name.begins_with("Portal_"):
+				new_object = child  # Keep the same portal
+				new_object.global_node = $Global
+				print("Portal maintained: ", child.name)
+			
+			if new_object:
+				new_objects.append(new_object)
+				if child != new_object:
+					child.queue_free()
 		
-		elif child.name.begins_with("SetupStep"):
-			new_object = simulation_step_scene.instantiate()
-			new_object.global_node = $Global
-			new_object.position = child.position
-			new_object.name = "SimulationStep_%d" % new_objects.size()
-			print("Replaced SetupStep with SimulationStep at position: ", child.position)
-		
-		elif child.name.begins_with("Portal_"):
-			new_object = child  # Keep the same portal
-			new_object.global_node = $Global
-			print("Portal maintained: ", child.name)
-		
-		if new_object:
-			new_objects.append(new_object)
-			if child != new_object:
+		for child in $Grid.get_children():
+			if not child.name.begins_with("Portal_"):
 				child.queue_free()
-	
-	for child in $Grid.get_children():
-		if not child.name.begins_with("Portal_"):
-			child.queue_free()
-	
-	for new_object in new_objects:
-		if new_object.get_parent() != $Grid:
-			$Grid.add_child(new_object)
-		if new_object.name.begins_with("SimulationBall"):
-			new_object.start_movement()
+		
+		for new_object in new_objects:
+			if new_object.get_parent() != $Grid:
+				$Grid.add_child(new_object)
+			if new_object.name.begins_with("SimulationBall"):
+				new_object.start_movement()
 
 func _on_menu_button_pressed() -> void:
 	get_tree().quit()
 
 func _on_button_pressed() -> void:
+	play_pressed = false
 	get_tree().reload_current_scene()
 
 func _on_portal_connect_button_pressed():
