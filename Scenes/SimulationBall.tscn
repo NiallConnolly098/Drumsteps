@@ -19,7 +19,7 @@ stream = ExtResource("3_y7ybb")
 [node name="CheckForSteps" type="Timer" parent="."]
 unique_name_in_owner = true
 process_callback = 0
-wait_time = 0.5
+wait_time = 0.25
 one_shot = true
 
 [connection signal="timeout" from="CheckForSteps" to="." method="_on_timer_timeout"]
