@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=3 uid="uid://2x7q0yy2f7be"]
+
+[ext_resource type="Script" path="res://addons/project_zip/project_zip_complete_dlg.gd" id="1_d0a3t"]
+
+[node name="ProjectZipCompleteDlg" type="Window"]
+title = "Project Zip File Created"
+initial_position = 2
+size = Vector2i(600, 300)
+popup_window = true
+script = ExtResource("1_d0a3t")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="ZipCompleteLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Zip file created."
+horizontal_alignment = 1
+
+[node name="ZipFileLocationLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "user://"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ShowFileExplorerBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Show Zip In File Explorer"
+
+[node name="OKBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "OK"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/ShowFileExplorerBtn" to="." method="_on_show_file_explorer_btn_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/OKBtn" to="." method="_on_ok_btn_pressed"]
